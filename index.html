@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Chatbot - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #6200EE;
+            --primary-dark: #4B00C2;
+            --background-dark: #121212;
+            --surface-dark: #1E1E1E;
+            --card-dark: #2D2D2D;
+            --message-bg-dark: #333333;
+            --input-bg: #222222;
+            --border-color: #444444;
+            --text-primary: #FFFFFF;
+            --text-secondary: #E0E0E0;
+            --text-muted: #AAAAAA;
+            --error-color: #FF5252;
+            --success-color: #00C853;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--text-primary);
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            background-color: var(--surface-dark);
+            padding: 12px 16px;
+            position: sticky;
+            top: 68px;
+            z-index: 99;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar {
+            display: flex;
+            width: 100%;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .search-btn {
+            background-color: var(--primary-color);
+            border: none;
+            width: 40px;
+            height: 40px;
+            color: var(--text-primary);
+            font-size: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 100%;
+            padding: 16px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+
+        .tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            position: relative;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Chat Cards */
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .chat-card {
+            background-color: var(--card-dark);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .chat-card:active {
+            background-color: #353535;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-timestamp {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .chat-preview {
+            padding: 14px;
+        }
+
+        .chat-snippet {
+            font-size: 14px;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .chat-footer {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            justify-content: space-between;
+        }
+
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--success-color);
+        }
+
+        .chat-status.inactive {
+            color: var(--text-muted);
+        }
+
+        .chat-messages-count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Create new chat button */
+        .new-chat-btn {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(98, 0, 238, 0.4);
+            cursor: pointer;
+            border: none;
+            z-index: 100;
+        }
+
+        .new-chat-btn:active {
+            background-color: var(--primary-dark);
+            transform: scale(0.95);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            margin: 32px auto;
+            background-color: var(--card-dark);
+            border-radius: 12px;
+        }
+
+        .empty-state-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .start-chat-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .start-chat-btn:active {
+            background-color: var(--primary-dark);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--surface-dark);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 10px;
+            gap: 4px;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        /* Adjust for bottom navigation */
+        .main-content {
+            padding-bottom: 80px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Apex Chatbot</h1>
+        <div class="user-profile">
+           
+        </div>
+    </div>
+
+   
+
+    <!-- Main Content -->
+    <div class="main-content">
+       
+
+        <!-- Chat Cards List -->
+        <div class="chat-list">
+            <!-- Chat Card 1 -->
+            <a href="dave.html" class="chat-card">
+                <div class="chat-header">
+                    <div class="chat-title">Dave</div>
+                   
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-snippet">Motivating and hopeful</div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-status">
+                        <span>●</span> Active
+                    </div>
+                   
+                </div>
+            </a>
+
+            <!--Luna-->
+
+            <a href="luna.html" class="chat-card">
+                <div class="chat-header">
+                    <div class="chat-title">Luna</div>
+                   
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-snippet">Witty and understanding</div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-status">
+                        <span>●</span> Active
+                    </div>
+                   
+                </div>
+            </a>
+<!--Robert-->
+            <a href="robert.html" class="chat-card">
+                <div class="chat-header">
+                    <div class="chat-title">Robert</div>
+                   
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-snippet">Wise Life Guru</div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-status">
+                        <span>●</span> Active
+                    </div>
+                   
+                </div>
+            </a>
+
+            <!--Rebecca-->
+
+            <a href="rebecca.html" class="chat-card">
+                <div class="chat-header">
+                    <div class="chat-title">Rebecca</div>
+                   
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-snippet">A Good Friend</div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-status">
+                        <span>●</span> Active
+                    </div>
+                   
+                </div>
+            </a>
+
+          
+        </div>
+    </div>
+
+   </body>
+
+
+</html>
