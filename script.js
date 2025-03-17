@@ -1,3 +1,30 @@
+const API_KEY = "AIzaSyDfRLr5B0vgLeMhIf0MmnRnjBd8vJ9W08Y";
+const system_prompt = "You are now a chatbot. Keep responses short and motivating.";
+
+// Selecting elements
+const go = document.getElementById("go");
+const input = document.getElementById("in");
+const output = document.getElementById("output");
+const clearChat = document.getElementById("clearChat");
+
+// Load chat history from local storage
+let history = JSON.parse(localStorage.getItem("chatHistory")) || [{ role: "system", text: system_prompt }];
+
+// Function to display messages
+function displayMessages() {
+    output.innerHTML = "";
+    history.forEach(({ role, text }) => {
+        if (role !== "system") { // Hide system prompt
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", role);
+            messageDiv.textContent = text;
+            output.appendChild(messageDiv);
+        }
+    });
+    output.scrollTop = output.scrollHeight; // Auto-scroll to latest message
+}
+
+// Function to call Gemini API
 async function callGeminiAPI(apiKey, history) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
@@ -16,63 +43,42 @@ async function callGeminiAPI(apiKey, history) {
             body: JSON.stringify(requestBody)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
         return data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
-
     } catch (error) {
         console.error("Error calling Gemini API:", error);
         return "Error occurred while fetching response.";
     }
 }
 
-const API_KEY = "AIzaSyDfRLr5B0vgLeMhIf0MmnRnjBd8vJ9W08Y"; // Replace with actual API key
-const system_prompt = "You are now a chatbot. Respond like a friendly motivator.";
-let history = JSON.parse(localStorage.getItem("chatHistory")) || [{ role: "system", text: system_prompt }];
+// Load saved chat on page load
+displayMessages();
 
-const go = document.getElementById("go");
-const input = document.getElementById("in");
-const output = document.getElementById("output");
-
-// Function to add messages to chat and save them locally
-function addMessage(text, sender) {
-    const messageDiv = document.createElement("div");
-    messageDiv.classList.add("message", sender === "user" ? "user-message" : "bot-message");
-    messageDiv.textContent = text;
-    output.appendChild(messageDiv);
-
-    // Auto-scroll to the latest message
-    output.scrollTop = output.scrollHeight;
-}
-
-// Function to load previous chats from localStorage
-function loadPreviousChats() {
-    history.forEach((msg) => {
-        if (msg.role !== "system") {
-            addMessage(msg.text, msg.role === "user" ? "user" : "bot");
-        }
-    });
-}
-
-// Load previous messages when the page loads
-loadPreviousChats();
-
+// Click event for sending messages
 go.addEventListener("click", async () => {
-    const user_reply = input.value.trim();
-    if (!user_reply) return;
+    const userText = input.value.trim();
+    if (!userText) return;
 
-    addMessage(user_reply, "user"); // Show user message
-    history.push({ role: "user", text: user_reply });
+    // Add user message to history
+    history.push({ role: "user", text: userText });
+    displayMessages();
+    input.value = "";
 
-    input.value = ""; // Clear input field
-
-    const responseText = await callGeminiAPI(API_KEY, history);
-    addMessage(responseText, "bot"); // Show bot response
-    history.push({ role: "model", text: responseText });
-
-    // Save updated chat history in localStorage
+    // Call API and get response
+    const botResponse = await callGeminiAPI(API_KEY, history);
+    history.push({ role: "bot", text: botResponse });
+    
+    // Save chat to local storage
     localStorage.setItem("chatHistory", JSON.stringify(history));
+
+    displayMessages();
+});
+
+// Clear chat button
+clearChat.addEventListener("click", () => {
+    history = [{ role: "system", text: system_prompt }]; // Reset history
+    localStorage.removeItem("chatHistory"); // Remove from local storage
+    displayMessages();
 });
