@@ -6,7 +6,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    background-color: #121212; /* Dark background */
     margin: 0;
     padding: 0;
     display: flex;
@@ -16,20 +16,20 @@ body {
     overflow: hidden;
 }
 
-/* Chat Container - Mobile-sized */
+/* Chat Container */
 #chat-container {
     width: 100%;
-    max-width: 400px; /* Keeps it like a phone screen */
-    height: 100vh; /* Full mobile screen */
-    background: white;
+    max-width: 400px;
+    height: 100vh;
+    background: #1E1E1E; /* Dark grey */
     display: flex;
     flex-direction: column;
-    border-radius: 0; /* No rounded corners for full-screen feel */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
-/* Header inside the chat container */
+/* Header */
 .header {
     width: 100%;
     background-color: #6200EE;
@@ -57,7 +57,7 @@ body {
     cursor: pointer;
 }
 
-/* Chat Output (Message Bubbles) */
+/* Chat Output */
 #output {
     flex: 1;
     overflow-y: auto;
@@ -65,11 +65,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: #f9f9f9;
+    background-color: #181818; /* Darker chat background */
     scroll-behavior: smooth;
 }
 
-/* User Message (Right side) */
+/* User Message */
 .message.user {
     align-self: flex-end;
     background-color: #6200EE;
@@ -80,11 +80,11 @@ body {
     word-wrap: break-word;
 }
 
-/* Bot Message (Left side) */
+/* Bot Message */
 .message.bot {
     align-self: flex-start;
-    background-color: #e0e0e0;
-    color: black;
+    background-color: #333333; /* Dark grey bot message */
+    color: white;
     padding: 10px 15px;
     border-radius: 20px 20px 20px 0;
     max-width: 70%;
@@ -95,17 +95,19 @@ body {
 .input-container {
     display: flex;
     padding: 10px;
-    border-top: 1px solid #ddd;
-    background-color: white;
+    border-top: 1px solid #333;
+    background-color: #1E1E1E;
 }
 
 #in {
     flex: 1;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #444;
     border-radius: 20px;
     font-size: 16px;
     outline: none;
+    background-color: #222;
+    color: white;
 }
 
 #go {
